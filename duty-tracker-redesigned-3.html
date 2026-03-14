@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Duty Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   1. ROOT VARIABLES
+============================================ */
+:root {
+  --primary: #6366F1;
+  --primary-hover: #4F46E5;
+  --primary-light: #EEF2FF;
+  --primary-border: #C7D2FE;
+  --background: #F8FAFC;
+  --card: #FFFFFF;
+  --text: #111827;
+  --text-secondary: #6B7280;
+  --border: #E5E7EB;
+  --success: #10B981;
+  --green: #10B981;
+  --green-light: #ECFDF5;
+  --green-border: #A7F3D0;
+  --danger: #EF4444;
+  --red: #EF4444;
+  --red-light: #FEF2F2;
+  --red-border: #FECACA;
+  --orange: #F59E0B;
+  --orange-light: #FFFBEB;
+  --orange-border: #FDE68A;
+  --cyan: #6366F1;
+  --cyan-light: #EEF2FF;
+  --cyan-border: #C7D2FE;
+  --shadow: 0 1px 3px rgba(0,0,0,.05), 0 2px 8px rgba(0,0,0,.04);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
+  --surface: #F1F5F9;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+}
+
+/* ============================================
+   1b. DARK MODE VARIABLES
+============================================ */
+body.dark {
+  color-scheme: dark;
+  --primary: #818CF8;
+  --primary-hover: #6366F1;
+  --primary-light: #1E1B4B;
+  --primary-border: #3730A3;
+  --background: #0F172A;
+  --card: #1E293B;
+  --text: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --border: #334155;
+  --success: #34D399;
+  --green: #34D399;
+  --green-light: #064E3B;
+  --green-border: #065F46;
+  --danger: #F87171;
+  --red: #F87171;
+  --red-light: #450A0A;
+  --red-border: #7F1D1D;
+  --orange: #FBBF24;
+  --orange-light: #431407;
+  --orange-border: #78350F;
+  --cyan: #818CF8;
+  --cyan-light: #1E1B4B;
+  --cyan-border: #3730A3;
+  --shadow: 0 1px 3px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.2);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,.4), 0 1px 4px rgba(0,0,0,.2);
+  --surface: #263548;
+}
+
+/* ============================================
+   2. GLOBAL STYLES
+============================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--background);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  padding-bottom: 96px;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+input::placeholder { color: var(--text-secondary); }
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator { filter: none; opacity: .5; }
+select option { background: var(--card); color: var(--text); }
+
+/* ============================================
+   3. LAYOUT
+============================================ */
+.wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Hidden blobs (kept for DOM compatibility, not shown) */
+.blob, .b1, .b2, .b3 { display: none; }
+
+/* ============================================
+   4. COMPONENTS
+============================================ */
+
+/* --- Header --- */
+.hdr {
+  padding: 16px 16px 14px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 0 var(--border);
+  max-width: 480px;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+}
+
+/* We need sticky to work across full width */
+.hdr {
+  max-width: 100%;
+}
+.hdr-inner {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.hdr-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo span.logo-icon {
+  font-size: 20px;
+}
+.logo-s {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+.hbtns { display: flex; gap: 8px; }
+.ib {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, border-color .15s;
+}
+.ib:hover { background: var(--background); }
+.ib.hm {
+  border-color: var(--primary-border);
+  background: var(--primary-light);
+}
+
+/* --- Stats Bar --- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.sc {
+  border-radius: var(--radius);
+  padding: 10px 8px;
+  text-align: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.sc1 { border-top: 2px solid var(--primary); }
+.sc2 { border-top: 2px solid var(--primary); }
+.sc3 { border-top: 2px solid var(--orange); }
+.sc4 { border-top: 2px solid var(--success); }
+.sc-l { font-size: 10px; color: var(--text-secondary); font-weight: 500; letter-spacing: 0.2px; }
+.sc-v { font-size: 14px; font-weight: 700; margin-top: 4px; color: var(--text); }
+
+/* --- Streak Card --- */
+.spill { display: flex; gap: 8px; margin-bottom: 12px; }
+.stk {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow);
+}
+.sf { font-size: 22px; line-height: 1; }
+.sn { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+.sl { font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+.sm { margin-left: auto; font-size: 11px; color: var(--primary); font-weight: 700; white-space: nowrap; }
+
+/* --- Goal Card --- */
+.gc {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+}
+.gc-t { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.gc-tt { font-size: 13px; font-weight: 700; color: var(--text); }
+.gc-n { font-size: 11px; color: var(--text-secondary); }
+.gc-n b { color: var(--text); font-weight: 600; }
+.gbar { height: 8px; background: var(--background); border-radius: 100px; overflow: hidden; margin-bottom: 8px; border: 1px solid var(--border); }
+.gbar-f { height: 100%; border-radius: 100px; transition: width .7s cubic-bezier(.4,0,.2,1); background: linear-gradient(90deg, #6366F1, #8B5CF6); }
+.gc-b { display: flex; justify-content: space-between; align-items: center; }
+.gpct { font-size: 12px; font-weight: 700; color: var(--primary); }
+.gmsg { font-size: 11px; color: var(--text-secondary); }
+
+/* --- Quote --- */
+.qt-s {
+  background: var(--background);
+  border-left: 3px solid var(--primary-border);
+  padding: 10px 12px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 2px;
+}
+.qt { font-size: 12px; color: var(--text-secondary); font-style: italic; line-height: 1.6; }
+
+/* --- Card --- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.card::before { display: none; }
+.ct {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  letter-spacing: -0.3px;
+}
+
+/* --- Form Elements --- */
+.lbl { display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.inp {
+  display: block;
+  width: 100%;
+  background: var(--background);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  font-size: 14px;
+  margin-bottom: 14px;
+  outline: none;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  transition: border .2s, box-shadow .2s, background .2s;
+}
+.inp:focus {
+  border-color: var(--primary);
+  background: var(--card);
+  box-shadow: 0 0 0 3px rgba(99,102,241,.10);
+}
+
+/* --- Toggle Box --- */
+.dbox {
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: var(--primary-light);
+  border: 1.5px solid var(--primary-border);
+}
+.obox {
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: var(--orange-light);
+  border: 1.5px solid var(--orange-border);
+}
+.bt { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.tog-r { display: flex; justify-content: space-between; align-items: center; }
+.tog { width: 46px; height: 26px; border-radius: 100px; cursor: pointer; position: relative; transition: all .3s; flex-shrink: 0; }
+.tok { position: absolute; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--card); transition: left .3s; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+.tog.on { background: var(--primary); }
+.tog.off { background: var(--border); }
+
+/* --- Preview Box --- */
+.pvb {
+  background: var(--green-light);
+  border: 1.5px solid var(--green-border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.pv-r { display: flex; justify-content: space-between; align-items: center; }
+.pv-l { font-size: 11px; color: var(--green); font-weight: 700; text-transform: uppercase; letter-spacing: .6px; }
+.pv-a { font-size: 24px; font-weight: 800; color: var(--green); letter-spacing: -0.5px; }
+.pv-s { display: flex; gap: 12px; margin-top: 6px; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+
+/* --- Buttons --- */
+.btn {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background .15s, transform .1s, box-shadow .15s;
+}
+.btn:active { transform: scale(.98); }
+.btn-g {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(99,102,241,.25);
+}
+.btn-g:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(99,102,241,.3); }
+.btn-gh {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+.btn-gh:hover { background: var(--background); }
+
+/* --- List Header --- */
+.lhdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.ltit { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+.msel { color-scheme: dark light;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  transition: border .15s;
+}
+.msel:focus { border-color: var(--primary); }
+
+/* --- Record Card --- */
+.rec {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition: box-shadow .15s;
+}
+.rec:hover { box-shadow: var(--shadow-lg); }
+.rec::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+}
+.rec.p::before { background: var(--success); }
+.rec.a::before { background: var(--danger); }
+.rc-t { display: flex; justify-content: space-between; align-items: flex-start; }
+.rd { font-size: 14px; font-weight: 600; color: var(--text); }
+.rn { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+.ra { font-size: 16px; font-weight: 700; color: var(--success); letter-spacing: -0.3px; }
+.chips { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.chip { font-size: 11px; border-radius: 100px; padding: 3px 10px; font-weight: 600; }
+.cd { background: var(--primary-light); border: 1px solid var(--primary-border); color: var(--primary); }
+.ca { background: var(--red-light); border: 1px solid var(--red-border); color: var(--red); }
+.co { background: var(--orange-light); border: 1px solid var(--orange-border); color: var(--orange); }
+.ar { display: flex; gap: 8px; margin-top: 12px; }
+.ab {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+  transition: background .15s;
+}
+
+/* --- Summary Hero --- */
+.sh {
+  background: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.sh::before { display: none; }
+.sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.sg { border-radius: var(--radius); padding: 14px; }
+.sgl { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+.sgv { font-size: 18px; font-weight: 700; margin-top: 4px; letter-spacing: -0.3px; }
+.sgs { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+/* --- Goal Section in Summary --- */
+.gsec {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.gsec::before { display: none; }
+.gsect { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 14px; letter-spacing: -0.2px; }
+.grw { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+.gr { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
+.gr svg { transform: rotate(-90deg); }
+.grt { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.grp { font-size: 16px; font-weight: 800; letter-spacing: -0.5px; }
+.grl { font-size: 9px; color: var(--text-secondary); margin-top: 1px; font-weight: 500; }
+.gsr { display: flex; justify-content: space-between; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.gsl { font-size: 12px; color: var(--text-secondary); }
+.gsv { font-size: 13px; font-weight: 700; }
+.msr { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+.ms { padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+
+/* --- Chart --- */
+.chc {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.cht { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.cbars { display: flex; align-items: flex-end; gap: 4px; height: 65px; }
+.cbw { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; }
+.cbb { flex: 1; width: 100%; background: var(--background); border-radius: 5px; display: flex; align-items: flex-end; overflow: hidden; }
+.cbf { width: 100%; border-radius: 5px; transition: height .6s; background: var(--primary); }
+.cbf.ot { background: var(--orange); }
+.cbd { font-size: 9px; color: var(--text-secondary); font-weight: 600; }
+
+/* --- Breakdown Bar --- */
+.bkb { background: var(--background); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; }
+.pbr { display: flex; height: 8px; border-radius: 100px; overflow: hidden; gap: 2px; }
+
+/* --- Calendar --- */
+.calg { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-top: 8px; }
+.calh { text-align: center; font-size: 10px; color: var(--text-secondary); font-weight: 600; padding: 4px 0; }
+.cald { aspect-ratio: 1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; position: relative; }
+.cald.e { background: transparent; }
+.cald.dy { background: var(--primary-light); border: 1px solid var(--primary-border); color: var(--primary); }
+.cald.ab { background: var(--red-light); border: 1px solid var(--red-border); color: var(--red); }
+.cald.nr { background: var(--background); border: 1px solid var(--border); color: var(--text-secondary); }
+.cald.td { box-shadow: 0 0 0 2px var(--primary) !important; }
+.cald.ht::after { content: '⚡'; position: absolute; top: 1px; right: 2px; font-size: 7px; }
+.cdn { font-size: 10px; }
+.cda { font-size: 8px; opacity: .8; margin-top: 1px; }
+.clg { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.cli { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+.cldot { width: 8px; height: 8px; border-radius: 3px; }
+
+/* --- Savings Card --- */
+.savc { border-radius: var(--radius-lg); padding: 16px; text-align: center; margin-bottom: 12px; position: relative; overflow: hidden; }
+.savc::before { display: none; }
+
+/* --- Expense Grid --- */
+.ecg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.ec { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; text-align: center; box-shadow: var(--shadow); }
+.ecl { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+.ecv { font-size: 18px; font-weight: 700; margin-top: 6px; letter-spacing: -0.3px; }
+.erc { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); transition: box-shadow .15s; }
+.erc:hover { box-shadow: var(--shadow-lg); }
+.ern { font-size: 14px; font-weight: 600; }
+.erc2 { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+.era { font-size: 15px; font-weight: 700; color: var(--red); letter-spacing: -0.3px; }
+
+/* --- Compare --- */
+.cmpg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.cmc { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; text-align: center; box-shadow: var(--shadow); }
+.cmm { font-size: 10px; color: var(--text-secondary); font-weight: 600; letter-spacing: .5px; margin-bottom: 6px; text-transform: uppercase; }
+.cma { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+.cms { font-size: 11px; color: var(--text-secondary); margin-top: 3px; }
+.cbrw { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.cbl { font-size: 11px; color: var(--text-secondary); width: 46px; text-align: right; flex-shrink: 0; font-weight: 500; }
+.cbbg { flex: 1; height: 14px; background: var(--background); border-radius: 100px; overflow: hidden; }
+.cbfl { height: 100%; border-radius: 100px; display: flex; align-items: center; padding-left: 6px; font-size: 10px; font-weight: 600; transition: width .8s ease; }
+.cmdf { background: var(--background); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; text-align: center; margin-top: 10px; }
+
+/* --- Empty State --- */
+.empty { text-align: center; padding: 40px 32px; color: var(--text-secondary); font-size: 14px; }
+.ei { font-size: 36px; margin-bottom: 10px; }
+
+/* --- Bottom Navigation --- */
+.bnav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 10px 0 16px;
+  z-index: 50;
+  box-shadow: 0 -1px 0 var(--border), 0 -4px 16px rgba(0,0,0,.04);
+}
+.bn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px 0; transition: opacity .15s; }
+.bn-i { font-size: 20px; transition: transform .2s; }
+.bn-l { font-size: 10px; color: var(--text-secondary); font-weight: 600; transition: color .2s; text-transform: uppercase; letter-spacing: 0.3px; }
+.bn.a1 .bn-i, .bn.a2 .bn-i, .bn.a3 .bn-i, .bn.a4 .bn-i { transform: scale(1.15); }
+.bn.a1 .bn-l, .bn.a2 .bn-l, .bn.a3 .bn-l, .bn.a4 .bn-l { color: var(--primary); }
+.bn-space { width: 68px; flex-shrink: 0; }
+
+/* --- FAB Button --- */
+.fab {
+  position: fixed;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  border: none;
+  border-radius: 50px;
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  z-index: 55;
+  box-shadow: 0 4px 16px rgba(99,102,241,.4), 0 2px 6px rgba(99,102,241,.2);
+  transition: transform .2s cubic-bezier(.4,0,.2,1), background .15s, box-shadow .2s;
+}
+.fab:hover { background: var(--primary-hover); box-shadow: 0 6px 24px rgba(99,102,241,.45); }
+.fab:active { transform: translateX(-50%) scale(.95); }
+.fab-icon { font-size: 18px; }
+.fab-label { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 0.2px; }
+
+/* --- Drawer --- */
+.drw-ov {
+  position: fixed;
+  inset: 0;
+  background: rgba(17,24,39,.4);
+  z-index: 80;
+  display: none;
+  backdrop-filter: blur(4px);
+}
+.drw-ov.show { display: block; }
+.drw {
+  position: fixed;
+  left: -290px;
+  top: 0;
+  bottom: 0;
+  width: 290px;
+  background: var(--card);
+  z-index: 90;
+  transition: left .28s cubic-bezier(.4,0,.2,1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  box-shadow: 4px 0 32px rgba(0,0,0,.1);
+}
+.drw.open { left: 0; }
+.drw-h { padding: 24px 16px 16px; background: var(--background); border-bottom: 1px solid var(--border); position: relative; }
+.drw-logo { font-size: 16px; font-weight: 800; color: var(--text); letter-spacing: -0.4px; }
+.drw-sub { font-size: 11px; color: var(--text-secondary); margin-top: 3px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; }
+.drw-x { position: absolute; top: 20px; right: 14px; background: var(--background); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; color: var(--text-secondary); cursor: pointer; font-size: 14px; transition: background .15s; }
+.drw-x:hover { background: var(--border); }
+.drw-s { padding: 16px 16px 6px; font-size: 10px; color: var(--text-secondary); letter-spacing: 1.2px; font-weight: 700; text-transform: uppercase; }
+.drw-it { display: flex; align-items: center; gap: 12px; padding: 11px 16px; cursor: pointer; border-left: 3px solid transparent; transition: all .15s; margin-bottom: 1px; }
+.drw-it:hover, .drw-it.act { background: var(--primary-light); border-left-color: var(--primary); }
+.drw-ic { font-size: 18px; width: 24px; text-align: center; }
+.drw-lb { font-size: 13px; font-weight: 600; color: var(--text); }
+.drw-dv { height: 1px; background: var(--border); margin: 8px 16px; }
+
+/* --- Modal (bottom sheet) --- */
+.mov {
+  position: fixed;
+  inset: 0;
+  background: rgba(17,24,39,.5);
+  z-index: 100;
+  display: none;
+  align-items: flex-end;
+}
+.mov.show { display: flex; }
+.mod {
+  width: 100%;
+  background: var(--card);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 24px 20px 32px;
+  max-width: 480px;
+  margin: 0 auto;
+  border-top: 2px solid var(--primary);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 -8px 32px rgba(0,0,0,.1);
+}
+.mt { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: var(--text); letter-spacing: -0.3px; }
+.mbtns { display: flex; gap: 8px; }
+.cp2 { background: var(--primary-light); border: 1px solid var(--primary-border); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 12px; font-size: 13px; color: var(--primary); font-weight: 600; }
+.sdv { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+.sst { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .7px; }
+
+/* --- Toast --- */
+.tst {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  z-index: 999;
+  box-shadow: var(--shadow-lg);
+  white-space: nowrap;
+  display: none;
+}
+
+/* --- Celebration Modal --- */
+.cov { position: fixed; inset: 0; background: rgba(17,24,39,.75); z-index: 200; display: none; align-items: center; justify-content: center; }
+.cov.show { display: flex; }
+.cbox {
+  background: var(--card);
+  border-radius: var(--radius-xl);
+  padding: 32px 24px;
+  text-align: center;
+  max-width: 300px;
+  width: 90%;
+  position: relative;
+  overflow: hidden;
+  animation: pop .35s cubic-bezier(.175,.885,.32,1.275);
+  box-shadow: 0 24px 64px rgba(0,0,0,.2);
+}
+.cbox::before { display: none; }
+@keyframes pop { from { transform: scale(.55); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.cf { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.cp { position: absolute; border-radius: 2px; animation: fall linear infinite; }
+@keyframes fall { 0% { transform: translateY(-10px) rotate(0); opacity: 1; } 100% { transform: translateY(500px) rotate(720deg); opacity: 0; } }
+.cem { font-size: 52px; display: block; margin-bottom: 10px; }
+.ctit { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 6px; letter-spacing: -0.5px; }
+.cmsg { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+.camt { font-size: 28px; font-weight: 800; color: var(--success); margin: 10px 0; letter-spacing: -0.8px; }
+.ccls { background: var(--primary); border: none; border-radius: var(--radius); padding: 14px; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; width: 100%; font-family: 'Inter', sans-serif; margin-top: 12px; transition: background .15s; }
+.ccls:hover { background: var(--primary-hover); }
+
+/* --- Delete Confirm Modal --- */
+.dcov { position: fixed; inset: 0; background: rgba(17,24,39,.5); z-index: 150; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+.dcov.show { display: flex; }
+.dbox2 { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 28px 24px; text-align: center; max-width: 290px; width: 90%; animation: pop .22s cubic-bezier(.175,.885,.32,1.275); box-shadow: 0 16px 48px rgba(0,0,0,.15); }
+.dbox2-icon { font-size: 40px; margin-bottom: 12px; }
+.dbox2-title { font-size: 16px; font-weight: 700; color: var(--red); margin-bottom: 8px; }
+.dbox2-msg { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6; }
+.dbox2-btns { display: flex; gap: 8px; }
+.dbox2-btns button { flex: 1; padding: 12px; border-radius: var(--radius); border: none; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; }
+.dbox2-btns button:active { transform: scale(.97); }
+.dbtn-cancel { background: var(--background); color: var(--text-secondary); border: 1px solid var(--border) !important; }
+.dbtn-del { background: var(--red); color: #fff; }
+
+/* --- Search & Filter --- */
+.srch { display: flex; gap: 8px; margin-bottom: 14px; }
+.srch-inp { flex: 1; background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; outline: none; color: var(--text); font-family: 'Inter', sans-serif; transition: border .2s, box-shadow .2s; }
+.srch-inp:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,.10); }
+.srch-inp::placeholder { color: var(--text-secondary); }
+.filt-btn { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer; white-space: nowrap; transition: all .15s; }
+.filt-btn.act { background: var(--primary-light); border-color: var(--primary-border); color: var(--primary); }
+.exp-btn { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all .15s; white-space: nowrap; }
+.exp-btn:hover { background: var(--background); color: var(--text); }
+.exp-btn:active { transform: scale(.97); }
+
+/* --- Export Modal --- */
+.ecov { position: fixed; inset: 0; background: rgba(17,24,39,.5); z-index: 150; display: none; align-items: flex-end; backdrop-filter: blur(4px); }
+.ecov.show { display: flex; }
+.emod { width: 100%; background: var(--card); border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 24px 20px 32px; max-width: 480px; margin: 0 auto; border-top: 2px solid var(--success); box-shadow: 0 -8px 32px rgba(0,0,0,.1); }
+.emod-t { font-size: 18px; font-weight: 700; margin-bottom: 18px; color: var(--text); letter-spacing: -0.3px; }
+.exp-opt { display: flex; flex-direction: column; gap: 8px; }
+.exp-row { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all .15s; box-shadow: var(--shadow); }
+.exp-row:hover { background: var(--background); border-color: var(--primary-border); }
+.exp-row:active { transform: scale(.99); }
+.exp-row-ic { font-size: 24px; }
+.exp-row-t { font-size: 14px; font-weight: 600; color: var(--text); }
+.exp-row-s { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+/* --- Weekly View --- */
+.wk-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 8px; }
+.wk-head { text-align: center; font-size: 10px; color: var(--text-secondary); font-weight: 600; padding: 4px 0; }
+.wk-cell { aspect-ratio: 1; border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; cursor: pointer; transition: transform .15s; }
+.wk-cell:active { transform: scale(.92); }
+.wk-cell.wdy { background: var(--primary-light); border: 1px solid var(--primary-border); color: var(--primary); }
+.wk-cell.wab { background: var(--red-light); border: 1px solid var(--red-border); color: var(--red); }
+.wk-cell.wnr { background: var(--background); border: 1px solid var(--border); color: var(--text-secondary); }
+.wk-cell.wto { box-shadow: 0 0 0 2px var(--primary) !important; }
+.wk-cell.wfu { background: transparent; border: 1px dashed var(--border); color: var(--border); }
+.wk-amt { font-size: 8px; opacity: .75; margin-top: 1px; }
+.wk-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.wk-nav-btn { background: var(--background); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 14px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all .15s; }
+.wk-nav-btn:hover { background: var(--border); color: var(--text); }
+.wk-nav-btn:active { transform: scale(.96); }
+.wk-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.wk-sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.wk-s { border-radius: var(--radius); padding: 10px; text-align: center; }
+.wk-sl { font-size: 10px; color: var(--text-secondary); font-weight: 500; }
+.wk-sv { font-size: 15px; font-weight: 700; margin-top: 3px; letter-spacing: -0.3px; }
+
+/* --- PIN Screen --- */
+.pin-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--background);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.pin-screen.hidden { display: none; }
+.pin-logo { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 6px; text-align: center; letter-spacing: -0.5px; }
+.pin-sub { font-size: 12px; color: var(--text-secondary); margin-bottom: 40px; text-align: center; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.pin-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 32px; text-align: center; }
+.pin-dots { display: flex; gap: 16px; margin-bottom: 40px; }
+.pin-dot { width: 16px; height: 16px; border-radius: 50%; background: transparent; border: 2px solid var(--border); transition: all .2s; }
+.pin-dot.filled { background: var(--primary); border-color: var(--primary); transform: scale(1.1); }
+.pin-dot.error { background: var(--red); border-color: var(--red); animation: shake .3s ease; }
+.pin-dot.success { background: var(--success); border-color: var(--success); }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+.pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 280px; }
+.pin-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s;
+  user-select: none;
+  -webkit-user-select: none;
+  box-shadow: var(--shadow);
+}
+.pin-btn:active { background: var(--primary-light); border-color: var(--primary); transform: scale(.93); }
+.pin-btn.del { font-size: 20px; background: var(--red-light); border-color: var(--red-border); color: var(--red); }
+.pin-btn.del:active { background: #FEE2E2; }
+.pin-btn.empty { background: transparent; border: none; cursor: default; box-shadow: none; }
+.pin-err { font-size: 12px; color: var(--red); margin-top: -24px; margin-bottom: 20px; min-height: 18px; text-align: center; font-weight: 600; }
+.pin-forgot { font-size: 13px; color: var(--text-secondary); margin-top: 24px; cursor: pointer; text-decoration: underline; text-align: center; font-weight: 500; }
+.pin-forgot:hover { color: var(--primary); }
+
+/* ============================================
+   5. UTILITIES
+============================================ */
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- PIN LOCK SCREEN -->
+<div class="pin-screen" id="pinScreen">
+  <div class="pin-logo">⚔️ DUTY TRACKER</div>
+  <div class="pin-sub">KAMAYI KA HISAAB</div>
+  <div class="pin-title" id="pinTitle">🔐 PIN DAALO</div>
+  <div class="pin-dots" id="pinDots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-err" id="pinErr"></div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="pinPress('1')">1</button>
+    <button class="pin-btn" onclick="pinPress('2')">2</button>
+    <button class="pin-btn" onclick="pinPress('3')">3</button>
+    <button class="pin-btn" onclick="pinPress('4')">4</button>
+    <button class="pin-btn" onclick="pinPress('5')">5</button>
+    <button class="pin-btn" onclick="pinPress('6')">6</button>
+    <button class="pin-btn" onclick="pinPress('7')">7</button>
+    <button class="pin-btn" onclick="pinPress('8')">8</button>
+    <button class="pin-btn" onclick="pinPress('9')">9</button>
+    <button class="pin-btn empty"></button>
+    <button class="pin-btn" onclick="pinPress('0')">0</button>
+    <button class="pin-btn del" onclick="pinDel()">⌫</button>
+  </div>
+  <div class="pin-forgot" id="pinForgot" onclick="pinReset()" style="display:none">PIN bhool gaye? Reset karo</div>
+</div>
+
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<div id="mainApp" style="visibility:hidden;pointer-events:none">
+<div class="tst" id="tst"></div>
+
+<!-- Celebration Modal -->
+<div class="cov" id="cov">
+  <div class="cbox">
+    <div class="cf" id="cfc"></div>
+    <span class="cem">🎉</span>
+    <div class="ctit">CONGRATULATIONS!</div>
+    <div class="cmsg">Tumhari mehnat ka fal!</div>
+    <div style="font-size:9px;color:#444;margin-bottom:3px">GOAL POORA! 🏆</div>
+    <div class="camt" id="camt"></div>
+    <div style="font-size:11px;color:var(--text-secondary)" id="cmo"></div>
+    <button class="ccls" onclick="closeCel()">SHUKRIYA! AAGE BADHTE HAIN!</button>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="mov" id="sm">
+  <div class="mod">
+    <div class="mt">SETTINGS</div>
+    <label class="lbl">Monthly Salary (₹)</label>
+    <input class="inp" type="number" id="s_s" placeholder="14000">
+    <label class="lbl">Working Days / Month</label>
+    <input class="inp" type="number" id="s_d" placeholder="26">
+    <label class="lbl">Duty Hours / Day</label>
+    <input class="inp" type="number" id="s_h" placeholder="9">
+    <label class="lbl">OT Rate (₹/hour)</label>
+    <input class="inp" type="number" id="s_o" placeholder="150">
+    <div class="cp2" id="cp2">Daily wage loading...</div>
+    <hr class="sdv">
+    <div class="sst">MONTHLY GOAL</div>
+    <label class="lbl">Target (₹)</label>
+    <input class="inp" type="number" id="s_g" placeholder="20000">
+    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px">Khali = salary hi goal</div>
+    <div class="mbtns">
+      <button class="btn btn-g" onclick="saveSt()">SAVE</button>
+      <button class="btn btn-gh" style="margin-top:0" onclick="closeSt()">CANCEL</button>
+    </div>
+    <hr class="sdv">
+    <div class="sst">🔐 SECURITY</div>
+    <button class="btn" style="background:var(--primary-light);border:1px solid var(--primary-border);color:var(--primary);margin-bottom:8px" onclick="closeSt();openPinChange()">🔑 PIN CHANGE KARO</button>
+    <button class="btn" style="background:var(--red-light);border:1px solid var(--red-border);color:var(--red)" onclick="closeSt();pinRemove()">🔓 PIN HATAO</button>
+  </div>
+</div>
+
+<!-- Expense Modal -->
+<div class="mov" id="em">
+  <div class="mod">
+    <div class="mt" id="emt">ADD KHARCHA</div>
+    <label class="lbl">Naam</label>
+    <input class="inp" type="text" id="e_n" placeholder="Rent, Khana...">
+    <label class="lbl">Amount (₹)</label>
+    <input class="inp" type="number" id="e_a" placeholder="500">
+    <label class="lbl">Category</label>
+    <select class="inp" id="e_c">
+      <option>🏠 Rent</option>
+      <option>🍔 Khana</option>
+      <option>🚌 Transport</option>
+      <option>💊 Health</option>
+      <option>📱 Mobile/Net</option>
+      <option>👕 Kapde</option>
+      <option>🎮 Entertainment</option>
+      <option>📦 Other</option>
+    </select>
+    <label class="lbl">Tarikh</label>
+    <input class="inp" type="date" id="e_dt">
+    <label class="lbl">Note</label>
+    <input class="inp" type="text" id="e_nt" placeholder="optional...">
+    <div class="mbtns">
+      <button class="btn btn-g" onclick="saveExp()">SAVE</button>
+      <button class="btn btn-gh" style="margin-top:0" onclick="closeEm()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="dcov" id="dcov">
+  <div class="dbox2">
+    <div class="dbox2-icon">🗑️</div>
+    <div class="dbox2-title">DELETE KARO?</div>
+    <div class="dbox2-msg" id="dcov-msg">Yeh record hamesha ke liye delete ho jayega!</div>
+    <div class="dbox2-btns">
+      <button class="dbtn-cancel" onclick="closeDel()">CANCEL</button>
+      <button class="dbtn-del" onclick="confirmDel()">DELETE</button>
+    </div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="ecov" id="ecov">
+  <div class="emod">
+    <div class="emod-t">📤 EXPORT DATA</div>
+    <div class="exp-opt">
+      <div class="exp-row" onclick="expCSV()">
+        <div class="exp-row-ic">📊</div>
+        <div><div class="exp-row-t">CSV FILE</div><div class="exp-row-s">Excel mein open karo — sabhi records</div></div>
+      </div>
+      <div class="exp-row" onclick="expJSON()">
+        <div class="exp-row-ic">💾</div>
+        <div><div class="exp-row-t">JSON BACKUP</div><div class="exp-row-s">Full backup — baad mein restore kar sakte ho</div></div>
+      </div>
+      <div class="exp-row" onclick="expPrint()">
+        <div class="exp-row-ic">🖨️</div>
+        <div><div class="exp-row-t">PRINT / PDF</div><div class="exp-row-s">Monthly report print karo ya PDF banao</div></div>
+      </div>
+      <div class="exp-row" onclick="triggerImport()">
+        <div class="exp-row-ic">📥</div>
+        <div><div class="exp-row-t">RESTORE BACKUP</div><div class="exp-row-s">JSON backup se data wapas lao</div></div>
+      </div>
+      <input type="file" id="imp-file" accept=".json" style="display:none" onchange="importJSON(this)">
+    </div>
+    <button class="btn btn-gh" style="margin-top:11px" onclick="closeExp()">BAND KARO</button>
+  </div>
+</div>
+
+<!-- Side Drawer Overlay & Drawer -->
+<div class="drw-ov" id="dov" onclick="closeDrw()"></div>
+<div class="drw" id="drw">
+  <div class="drw-h">
+    <div class="drw-logo">⚔️ Duty Tracker</div>
+    <div class="drw-sub">Kamayi ka hisaab</div>
+    <button class="drw-x" onclick="closeDrw()">✕</button>
+  </div>
+  <div class="drw-s">MAIN</div>
+  <div class="drw-it act" id="di_add" onclick="gp('add')"><span class="drw-ic">⚡</span><span class="drw-lb">ADD ENTRY</span></div>
+  <div class="drw-it" id="di_history" onclick="gp('history')"><span class="drw-ic">📋</span><span class="drw-lb">HISTORY</span></div>
+  <div class="drw-it" id="di_weekly" onclick="gp('weekly')"><span class="drw-ic">📅</span><span class="drw-lb">WEEKLY VIEW</span></div>
+  <div class="drw-it" id="di_summary" onclick="gp('summary')"><span class="drw-ic">🏆</span><span class="drw-lb">SUMMARY</span></div>
+  <div class="drw-dv"></div>
+  <div class="drw-s">MORE</div>
+  <div class="drw-it" id="di_expense" onclick="gp('expense')"><span class="drw-ic">💸</span><span class="drw-lb">KHARCHA</span></div>
+  <div class="drw-it" id="di_calendar" onclick="gp('calendar')"><span class="drw-ic">📅</span><span class="drw-lb">CALENDAR</span></div>
+  <div class="drw-it" id="di_compare" onclick="gp('compare')"><span class="drw-ic">📊</span><span class="drw-lb">COMPARE</span></div>
+  <div class="drw-dv"></div>
+  <div class="drw-it" onclick="openSt()"><span class="drw-ic">⚙️</span><span class="drw-lb">SETTINGS</span></div>
+</div>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-top">
+    <div>
+      <div class="logo">⚔️ Duty Tracker</div>
+      <div class="logo-s" id="hp">Add Entry</div>
+    </div>
+    <div class="hbtns">
+      <button class="ib hm" onclick="openDrw()">
+        <svg width="17" height="13" viewBox="0 0 17 13" fill="none">
+          <rect width="17" height="2" rx="1" fill="currentColor"/>
+          <rect y="5.5" width="13" height="2" rx="1" fill="currentColor"/>
+          <rect y="11" width="9" height="2" rx="1" fill="currentColor"/>
+        </svg>
+      </button>
+      <button class="ib" id="theme-btn" onclick="toggleTheme()" title="Light/Dark mode">🌙</button>
+      <button class="ib" onclick="openSt()">⚙️</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="sc sc1"><div class="sc-l">Daily</div><div class="sc-v" id="hd" style="color:var(--primary)">₹538</div></div>
+    <div class="sc sc2"><div class="sc-l">Monthly</div><div class="sc-v" id="hm" style="color:var(--primary)">₹14K</div></div>
+    <div class="sc sc3"><div class="sc-l">OT/hr</div><div class="sc-v" id="ho" style="color:var(--orange)">—</div></div>
+    <div class="sc sc4"><div class="sc-l">Is Mahine</div><div class="sc-v" id="hc" style="color:var(--success)">₹0</div></div>
+  </div>
+  <div class="spill">
+    <div class="stk">
+      <div class="sf">🔥</div>
+      <div><div class="sn" id="sn">0</div><div class="sl">DIN STREAK</div></div>
+      <div class="sm" id="sm2">SHURU KARO!</div>
+    </div>
+  </div>
+  <div class="gc">
+    <div class="gc-t">
+      <div class="gc-tt">🎯 GOAL TRACKER</div>
+      <div class="gc-n">Kamaya: <b id="gbe">₹0</b> / <b id="gbg">₹14K</b></div>
+    </div>
+    <div class="gbar"><div class="gbar-f" id="gbb" style="width:0%"></div></div>
+    <div class="gc-b"><div class="gpct" id="gbp">0%</div><div class="gmsg" id="gbm">CHALO SHURU KAREIN! ⚡</div></div>
+  </div>
+  <div class="qt-s"><div class="qt" id="qt"></div></div>
+</div>
+
+<!-- Pages -->
+<div class="wrap">
+
+  <!-- ADD ENTRY PAGE -->
+  <div id="pa">
+    <div class="card">
+      <div class="ct" id="ft">⚡ ADD ENTRY</div>
+      <label class="lbl">Tarikh</label>
+      <input class="inp" type="date" id="fd">
+
+      <div class="dbox">
+        <div class="tog-r">
+          <div>
+            <div class="bt" style="color:var(--primary)">🏢 REGULAR DUTY</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:2px" id="ds">9H = ₹538 FIXED</div>
+          </div>
+          <div class="tog on" id="dt" onclick="togD()"><div class="tok" id="dk" style="left:26px"></div></div>
+        </div>
+        <div id="dst" style="margin-top:8px;font-size:13px;font-weight:600;color:var(--green)">✅ DUTY KI — ₹538 MILENGE</div>
+        <!-- Half Day Toggle -->
+        <div id="hd-row" style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(99,102,241,0.15)">
+          <div>
+            <div class="bt" style="color:var(--primary);font-size:12px">🌗 HALF DAY</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:1px" id="hd-sub">50% salary milegi</div>
+          </div>
+          <div class="tog off" id="hdt" onclick="togHD()"><div class="tok" id="hdk" style="left:4px"></div></div>
+        </div>
+      </div>
+
+      <div class="obox">
+        <div class="bt" style="color:var(--orange);font-size:12px">⚡ OVERTIME</div>
+        <label class="lbl">OT Ghante</label>
+        <input class="inp" type="number" id="fo" placeholder="0" oninput="updP()">
+        <div id="otc" style="font-size:12px;font-weight:600;display:none"></div>
+      </div>
+
+      <label class="lbl">Note</label>
+      <input class="inp" type="text" id="fn" placeholder="optional...">
+
+      <div class="pvb">
+        <div class="pv-r">
+          <span class="pv-l">IS DIN KI KAMAYI</span>
+          <span class="pv-a" id="pt">₹538</span>
+        </div>
+        <div class="pv-s">
+          <span id="pd">Duty: ₹538</span>
+          <span id="po">OT: ₹0</span>
+        </div>
+      </div>
+
+      <button class="btn btn-g" id="sb" onclick="hsub()">💾 SAVE KARO</button>
+      <button class="btn btn-gh" id="cb" onclick="canEd()" style="display:none">CANCEL</button>
+    </div>
+  </div>
+
+  <!-- HISTORY PAGE -->
+  <div id="ph" style="display:none">
+    <div class="lhdr">
+      <div class="ltit" id="ht">RECORDS</div>
+      <div style="display:flex;gap:5px">
+        <input class="msel" type="month" id="hm2" onchange="rH()">
+        <button class="exp-btn" onclick="openExp()">📤 EXPORT</button>
+      </div>
+    </div>
+    <div class="srch">
+      <input class="srch-inp" type="text" id="hsrch" placeholder="🔍 Search records..." oninput="rH()">
+      <button class="filt-btn" id="fbAll" onclick="setFilt('all')" style="background:var(--primary-light);border-color:var(--primary-border);color:var(--primary)">ALL</button>
+      <button class="filt-btn" id="fbDuty" onclick="setFilt('duty')">✅</button>
+      <button class="filt-btn" id="fbAbs" onclick="setFilt('absent')">❌</button>
+    </div>
+    <div id="hl"></div>
+  </div>
+
+  <!-- SUMMARY PAGE -->
+  <div id="ps" style="display:none">
+    <div class="lhdr">
+      <div class="ltit">SUMMARY</div>
+      <input class="msel" type="month" id="sm3" onchange="rS()">
+    </div>
+    <div id="sc2"></div>
+  </div>
+
+  <!-- EXPENSE PAGE -->
+  <div id="pe" style="display:none">
+    <div class="lhdr">
+      <div class="ltit">KHARCHA</div>
+      <div style="display:flex;gap:5px">
+        <input class="msel" type="month" id="exm" onchange="rE()">
+        <button onclick="openEm()" style="background:var(--primary);border:none;border-radius:10px;padding:8px 14px;color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(99,102,241,.25)">+ Add</button>
+      </div>
+    </div>
+    <div id="ec2"></div>
+  </div>
+
+  <!-- CALENDAR PAGE -->
+  <div id="pcal" style="display:none">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+        <div class="ct" style="margin-bottom:0" id="calt">📅 CALENDAR</div>
+        <input class="msel" type="month" id="calm" onchange="rCal()">
+      </div>
+      <div class="calg" id="calh2"></div>
+      <div class="calg" id="calg2"></div>
+      <div class="clg">
+        <div class="cli"><div class="cldot" style="background:#C7D2FE;border:1px solid #818CF8"></div>DUTY</div>
+        <div class="cli"><div class="cldot" style="background:#FECACA;border:1px solid #F87171"></div>ABSENT</div>
+        <div class="cli">⚡ = OT</div>
+      </div>
+    </div>
+    <div id="cals"></div>
+  </div>
+
+  <!-- COMPARE PAGE -->
+  <div id="pcmp" style="display:none">
+    <div class="card">
+      <div class="ct">📊 COMPARE</div>
+      <div style="display:flex;gap:7px;margin-bottom:11px">
+        <div style="flex:1"><label class="lbl">Mahina 1</label><input class="msel" type="month" id="cm1" style="width:100%" onchange="rCmp()"></div>
+        <div style="flex:1"><label class="lbl">Mahina 2</label><input class="msel" type="month" id="cm2" style="width:100%" onchange="rCmp()"></div>
+      </div>
+      <div id="cmpc"></div>
+    </div>
+  </div>
+
+  <!-- WEEKLY VIEW PAGE -->
+  <div id="pwkly" style="display:none">
+    <div class="card">
+      <div class="wk-nav">
+        <button class="wk-nav-btn" onclick="wkPrev()">◀ PEHLE</button>
+        <div class="wk-title" id="wk-title">THIS WEEK</div>
+        <button class="wk-nav-btn" onclick="wkNext()">AAGE ▶</button>
+      </div>
+      <div class="wk-grid" id="wk-heads"></div>
+      <div class="wk-grid" id="wk-cells"></div>
+      <div class="wk-sum" id="wk-sum"></div>
+    </div>
+    <div id="wk-recs"></div>
+  </div>
+
+</div><!-- end wrap -->
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="gp('add')">
+  <span class="fab-icon">⚡</span>
+  <span class="fab-label">ADD</span>
+</button>
+
+<!-- Bottom Nav -->
+<div class="bnav">
+  <div class="bn" id="bn_history" onclick="gp('history')"><div class="bn-i">📋</div><div class="bn-l">HISTORY</div></div>
+  <div class="bn" id="bn_weekly" onclick="gp('weekly')"><div class="bn-i">📅</div><div class="bn-l">WEEKLY</div></div>
+  <div class="bn-space"></div>
+  <div class="bn" id="bn_summary" onclick="gp('summary')"><div class="bn-i">🏆</div><div class="bn-l">SUMMARY</div></div>
+  <div class="bn" id="bn_expense" onclick="gp('expense')"><div class="bn-i">💸</div><div class="bn-l">KHARCHA</div></div>
+</div>
+
+</div><!-- end mainApp -->
+
+<script>
+const SK='dtr-v1',STK='dtr-s2',EK='dtr-e1';
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const QQ=['Mehnat karo aaj, aaram karo kal.','Sapne wo hain jo neend nahi aane dete. — APJ Kalam','Takleef andheri raat ki tarah — subah zaroor aati hai.','Mushkilein insaan ko mazboot banati hain.','Jo log raat ko sikhte hain, din mein chamakte hain.'];
+let R=[],EX=[],editId=null,editEId=null,dOn=true,halfDay=false;
+let ST={monthlyFixedSalary:14000,workingDaysInMonth:26,dutyHoursPerDay:9,otRatePerHour:'',monthlyGoal:''};
+const nm=()=>{const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`};
+const dw=()=>ST.monthlyFixedSalary/(ST.workingDaysInMonth||26);
+const gl=()=>parseFloat(ST.monthlyGoal)||parseFloat(ST.monthlyFixedSalary)||14000;
+const cE=r=>{const mul=r.halfDay?0.5:1;const d=r.dutyDone?dw()*mul:0,o=(parseFloat(r.otHours)||0)*(parseFloat(ST.otRatePerHour)||0);return{d,o,t:d+o}};
+const mE=m=>R.filter(r=>r.date.startsWith(m)).reduce((a,r)=>a+cE(r).t,0);
+const mEx=m=>EX.filter(e=>e.date.startsWith(m)).reduce((a,e)=>a+(parseFloat(e.amount)||0),0);
+const f=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const fd2=d=>new Date(d+'T00:00:00').toLocaleDateString('hi-IN',{day:'numeric',month:'long',year:'numeric'});
+function stk(){
+  let s=0,c=new Date();
+  const todayStr=c.toISOString().split('T')[0];
+  const todayRec=R.find(r=>r.date===todayStr);
+  if(!todayRec||!todayRec.dutyDone){c.setDate(c.getDate()-1);}
+  while(true){const ds=c.toISOString().split('T')[0];const r=R.find(r=>r.date===ds);if(r&&r.dutyDone){s++;c.setDate(c.getDate()-1)}else break;}
+  return s;
+}
+function load(){
+  try{R=JSON.parse(localStorage.getItem(SK)||'[]')}catch{}
+  try{ST={...ST,...JSON.parse(localStorage.getItem(STK)||'{}')}}catch{}
+  try{EX=JSON.parse(localStorage.getItem(EK)||'[]')}catch{}
+  document.getElementById('fd').value=new Date().toISOString().split('T')[0];
+  document.getElementById('e_dt').value=new Date().toISOString().split('T')[0];
+  const m=nm();['hm2','calm','sm3','exm'].forEach(id=>document.getElementById(id).value=m);
+  const p=new Date();p.setMonth(p.getMonth()-1);
+  document.getElementById('cm1').value=`${p.getFullYear()}-${String(p.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('cm2').value=m;
+  document.getElementById('qt').textContent='"'+QQ[Math.floor(Math.random()*QQ.length)]+'"';
+  ua();
+}
+const svR=()=>{try{localStorage.setItem(SK,JSON.stringify(R))}catch{}};
+const svE=()=>{try{localStorage.setItem(EK,JSON.stringify(EX))}catch{}};
+function ua(){uh();updP();ug();us2();}
+function uh(){
+  const w=dw();document.getElementById('hd').textContent=f(w);
+  const ms=Number(ST.monthlyFixedSalary);document.getElementById('hm').textContent=ms>=1000?'₹'+(ms/1000).toFixed(0)+'K':f(ms);
+  const otr=parseFloat(ST.otRatePerHour);document.getElementById('ho').textContent=otr?'₹'+otr:'—';
+  const e=mE(nm());document.getElementById('hc').textContent=e>=1000?'₹'+(e/1000).toFixed(1)+'K':f(e);
+  document.getElementById('ds').textContent=`${ST.dutyHoursPerDay}H = ${f(w)} FIXED`;
+}
+function us2(){const s=stk();document.getElementById('sn').textContent=s;const msgs=['SHURU KARO! ⚡','SHURU! 🌱','CHAL RAHA! 🌱','AAG! 🔥','AAG! 🔥','ZABARDAST! ⚔️','ZABARDAST! ⚔️','LEGEND! 👑'];document.getElementById('sm2').textContent=msgs[Math.min(s,msgs.length-1)];}
+function ug(){
+  const e=mE(nm()),g=gl(),pct=Math.min(Math.round((e/g)*100),100),rem=g-e;
+  document.getElementById('gbe').textContent=f(e);document.getElementById('gbg').textContent=f(g);
+  const bar=document.getElementById('gbb');bar.style.width=pct+'%';
+  let col,msg;
+  if(pct>=100){col='var(--green)';msg='🎉 GOAL POORA!'}else if(pct>=75){col='var(--green)';msg=`💪 ${f(rem)} AUR!`}else if(pct>=50){col='var(--orange)';msg=`⚡ ${f(rem)} BAAKI`}else{col='var(--primary)';msg='⚡ SHURU KAREIN!';}
+  bar.style.background=`linear-gradient(90deg,var(--primary),${col})`;
+  document.getElementById('gbp').textContent=pct+'%';document.getElementById('gbp').style.color=col;document.getElementById('gbm').textContent=msg;
+}
+function togHD(){
+  if(!dOn)return;
+  halfDay=!halfDay;
+  document.getElementById('hdt').className=halfDay?'tog on':'tog off';
+  document.getElementById('hdk').style.left=halfDay?'26px':'4px';
+  document.getElementById('hd-sub').textContent=halfDay?'50% milegi — Half day!':'50% salary milegi';
+  const w=dw(),hw=halfDay?w*0.5:w;
+  document.getElementById('dst').textContent=dOn?(halfDay?`🌗 HALF DAY — ${f(hw)} MILENGE`:`✅ DUTY KI — ${f(w)} MILENGE`):'❌ DUTY NAHI KI — ₹0';
+  updP();
+}
+function togD(){
+  dOn=!dOn;const w=Math.round(dw());
+  if(!dOn){halfDay=false;document.getElementById('hdt').className='tog off';document.getElementById('hdk').style.left='4px';}
+  document.getElementById('hd-row').style.opacity=dOn?'1':'0.3';
+  document.getElementById('dt').className=dOn?'tog on':'tog off';document.getElementById('dk').style.left=dOn?'26px':'4px';
+  document.getElementById('dst').style.color=dOn?'var(--green)':'var(--red)';
+  document.getElementById('dst').textContent=dOn?`✅ DUTY KI — ${f(w)} MILENGE`:'❌ DUTY NAHI KI — ₹0';
+  updP();
+}
+function updP(){
+  const w=dw(),oh=parseFloat(document.getElementById('fo').value)||0,otr=parseFloat(ST.otRatePerHour)||0;
+  const effW=halfDay?w*0.5:w;
+  const de=dOn?effW:0,oe=oh*otr,tot=de+oe;
+  document.getElementById('pt').textContent=f(tot);document.getElementById('pd').textContent='Duty: '+f(de);document.getElementById('po').textContent='OT: '+f(oe);
+  const oc=document.getElementById('otc');
+  if(oh&&otr){oc.style.display='block';oc.style.color='var(--green)';oc.textContent=`⚡ ${oh}H × ₹${otr} = ${f(oe)}`;}
+  else if(oh&&!otr){oc.style.display='block';oc.style.color='var(--red)';oc.textContent='⚠️ OT RATE SETTINGS MEIN SET KARO';}
+  else oc.style.display='none';
+}
+function hsub(){
+  const date=document.getElementById('fd').value;if(!date){tst('TARIKH DAALO!','e');return;}
+  const otHours=document.getElementById('fo').value,note=document.getElementById('fn').value;
+  if(editId!==null){R=R.map(r=>r.id===editId?{id:editId,date,dutyDone:dOn,halfDay,otHours,note}:r);editId=null;rFT();tst('UPDATE HO GAYA! ✅');}
+  else{if(R.find(r=>r.date===date)){tst('IS TARIKH KA RECORD PEHLE SE HAI!','e');return;}R.unshift({id:Date.now(),date,dutyDone:dOn,halfDay,otHours,note});R.sort((a,b)=>b.date.localeCompare(a.date));tst('SAVE HO GAYA! 💾');}
+  svR();rstF();ua();
+  const ne=mE(nm()),g=gl(),gk='gcl-'+nm();
+  if(ne>=g&&!localStorage.getItem(gk)){localStorage.setItem(gk,'1');const[y,mo]=nm().split('-');setTimeout(()=>showCel(ne,MN[parseInt(mo)-1]+' '+y),700);}
+  gp('history');rH();
+}
+function rFT(){document.getElementById('ft').textContent='⚡ ADD ENTRY';document.getElementById('sb').textContent='💾 SAVE KARO';document.getElementById('cb').style.display='none';}
+function rstF(){
+  document.getElementById('fo').value='';document.getElementById('fn').value='';document.getElementById('fd').value=new Date().toISOString().split('T')[0];
+  dOn=true;halfDay=false;
+  document.getElementById('dt').className='tog on';document.getElementById('dk').style.left='26px';
+  document.getElementById('hdt').className='tog off';document.getElementById('hdk').style.left='4px';
+  document.getElementById('hd-row').style.opacity='1';
+  document.getElementById('dst').style.color='var(--green)';document.getElementById('dst').textContent=`✅ DUTY KI — ${f(dw())} MILENGE`;updP();
+}
+function canEd(){editId=null;rFT();rstF();}
+// Delete confirmation
+let delPendingId=null,delPendingType='rec';
+function confirmDelR(id){delPendingId=id;delPendingType='rec';document.getElementById('dcov-msg').textContent='Yeh duty record hamesha ke liye delete ho jayega!';document.getElementById('dcov').classList.add('show');}
+function confirmDelExp(id){delPendingId=id;delPendingType='exp';document.getElementById('dcov-msg').textContent='Yeh kharcha record hamesha ke liye delete ho jayega!';document.getElementById('dcov').classList.add('show');}
+function closeDel(){delPendingId=null;document.getElementById('dcov').classList.remove('show');}
+function confirmDel(){
+  if(delPendingId===null){closeDel();return;}
+  if(delPendingType==='rec'){R=R.filter(r=>r.id!==delPendingId);svR();ua();tst('DELETE HO GAYA 🗑️','e');rH();}
+  else{EX=EX.filter(e=>e.id!==delPendingId);svE();rE();tst('DELETE! 🗑️','e');}
+  closeDel();
+}
+function delR(id){confirmDelR(id);}
+function delExp(id){confirmDelExp(id);}
+
+// History with search & filter
+let hFilt='all';
+function setFilt(f){
+  hFilt=f;
+  ['All','Duty','Abs'].forEach(x=>{const b=document.getElementById('fb'+x);if(b)b.className='filt-btn';});
+  const map={all:'fbAll',duty:'fbDuty',absent:'fbAbs'};
+  const active=document.getElementById(map[f]);
+  if(active){active.style.background='var(--primary-light)';active.style.borderColor='var(--primary-border)';active.style.color='var(--primary)';}
+  rH();
+}
+function rH(){
+  const m=document.getElementById('hm2').value,[y,mo]=m.split('-');
+  document.getElementById('ht').textContent=`${MN[parseInt(mo)-1]} ${y}`;
+  const q=(document.getElementById('hsrch').value||'').toLowerCase().trim();
+  let fl=R.filter(r=>r.date.startsWith(m));
+  if(hFilt==='duty')fl=fl.filter(r=>r.dutyDone);
+  else if(hFilt==='absent')fl=fl.filter(r=>!r.dutyDone);
+  if(q)fl=fl.filter(r=>r.date.includes(q)||(r.note||'').toLowerCase().includes(q)||fd2(r.date).toLowerCase().includes(q));
+  const l=document.getElementById('hl');
+  if(!fl.length){l.innerHTML=`<div class="empty"><div class="ei">${q?'🔍':'📭'}</div>${q?'Koi match nahi mila':'Is mahine koi record nahi'}</div>`;return;}
+  l.innerHTML=fl.map(r=>{const e=cE(r);const dc=r.dutyDone?(r.halfDay?`<span class="chip" style="background:#E0F2FE;border:1px solid #7DD3FC;color:var(--cyan)">🌗 ${f(e.d)}</span>`:`<span class="chip cd">🏢 ${f(e.d)}</span>`):`<span class="chip ca">❌ ABSENT</span>`;const oc=parseFloat(r.otHours)>0?`<span class="chip co">⚡ ${r.otHours}H=${f(e.o)}</span>`:'';
+  return`<div class="rec ${r.dutyDone?'p':'a'}"><div class="rc-t"><div><div class="rd">${fd2(r.date)}</div>${r.note?`<div class="rn">${r.note}</div>`:''}</div><div class="ra">${f(e.t)}</div></div><div class="chips">${dc}${oc}</div><div class="ar"><button class="ab" onclick="editR(${r.id})" style="background:var(--primary-light);color:var(--primary)">✏️ EDIT</button><button class="ab" onclick="confirmDelR(${r.id})" style="background:var(--red-light);color:var(--red)">🗑️ DEL</button></div></div>`;}).join('');
+}
+function editR(id){
+  const r=R.find(r=>r.id===id);if(!r)return;editId=id;
+  document.getElementById('fd').value=r.date;document.getElementById('fo').value=r.otHours||'';document.getElementById('fn').value=r.note||'';
+  dOn=r.dutyDone;halfDay=r.halfDay||false;
+  document.getElementById('dt').className=dOn?'tog on':'tog off';document.getElementById('dk').style.left=dOn?'26px':'4px';
+  document.getElementById('hdt').className=halfDay?'tog on':'tog off';document.getElementById('hdk').style.left=halfDay?'26px':'4px';
+  document.getElementById('hd-row').style.opacity=dOn?'1':'0.3';
+  document.getElementById('dst').style.color=dOn?'var(--green)':'var(--red)';
+  document.getElementById('dst').textContent=dOn?(halfDay?`🌗 HALF DAY — ${f(dw()*0.5)} MILENGE`:`✅ DUTY KI — ${f(dw())} MILENGE`):'❌ DUTY NAHI KI — ₹0';
+  document.getElementById('ft').textContent='✏️ EDIT ENTRY';document.getElementById('sb').textContent='✅ UPDATE';document.getElementById('cb').style.display='block';updP();gp('add');
+}
+function rCal(){
+  const m=document.getElementById('calm').value,[y,mo]=m.split('-');
+  document.getElementById('calt').textContent=`📅 ${MN[parseInt(mo)-1]} ${y}`;
+  const fd3=new Date(parseInt(y),parseInt(mo)-1,1).getDay(),dim=new Date(parseInt(y),parseInt(mo),0).getDate();
+  const tod=new Date().toISOString().split('T')[0];
+  document.getElementById('calh2').innerHTML=['S','M','T','W','T','F','S'].map(d=>`<div class="calh">${d}</div>`).join('');
+  let html='';for(let i=0;i<fd3;i++)html+=`<div class="cald e"></div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=`${y}-${mo}-${String(d).padStart(2,'0')}`,r=R.find(r=>r.date===ds);const isT=ds===tod,hasOT=r&&parseFloat(r.otHours)>0;
+    let cls='cald nr',a='';if(r){cls=`cald ${r.dutyDone?'dy':'ab'}`;const e=cE(r);if(e.t>0)a=`<div class="cda">₹${Math.round(e.t/1000*10)/10}k</div>`;}
+    if(isT)cls+=' td';if(hasOT)cls+=' ht';html+=`<div class="${cls}"><div class="cdn">${d}</div>${a}</div>`;
+  }
+  document.getElementById('calg2').innerHTML=html;
+  const fl=R.filter(r=>r.date.startsWith(m));
+  if(fl.length){const s=fl.reduce((a,r)=>{const e=cE(r);a.t+=e.t;a.d+=r.dutyDone?1:0;a.ab+=r.dutyDone?0:1;return a},{t:0,d:0,ab:0});
+  document.getElementById('cals').innerHTML=`<div class="card" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px"><div style="background:var(--primary-light);border:1px solid var(--primary-border);border-radius:10px;padding:9px;text-align:center"><div class="sc-l">DUTY</div><div style="font-size:17px;font-weight:700;color:var(--primary);margin-top:3px">${s.d}</div></div><div style="background:var(--red-light);border:1px solid var(--red-border);border-radius:10px;padding:9px;text-align:center"><div class="sc-l">ABSENT</div><div style="font-size:17px;font-weight:700;color:var(--red);margin-top:3px">${s.ab}</div></div><div style="background:var(--green-light);border:1px solid var(--green-border);border-radius:10px;padding:9px;text-align:center"><div class="sc-l">KAMAYI</div><div style="font-size:13px;font-weight:700;color:var(--green);margin-top:3px">${f(s.t/1000).replace('₹','')}K</div></div></div>`;}
+  else document.getElementById('cals').innerHTML='';
+}
+function openEm(id){editEId=id||null;if(id){const e=EX.find(x=>x.id===id);if(!e)return;document.getElementById('e_n').value=e.name;document.getElementById('e_a').value=e.amount;document.getElementById('e_c').value=e.category;document.getElementById('e_dt').value=e.date;document.getElementById('e_nt').value=e.note||'';document.getElementById('emt').textContent='EDIT KHARCHA';}else{document.getElementById('e_n').value='';document.getElementById('e_a').value='';document.getElementById('e_dt').value=new Date().toISOString().split('T')[0];document.getElementById('e_nt').value='';document.getElementById('emt').textContent='ADD KHARCHA';}document.getElementById('em').classList.add('show');}
+const closeEm=()=>document.getElementById('em').classList.remove('show');
+function saveExp(){
+  const name=document.getElementById('e_n').value.trim(),amount=document.getElementById('e_a').value,category=document.getElementById('e_c').value,date=document.getElementById('e_dt').value,note=document.getElementById('e_nt').value;
+  if(!name||!amount||!date){tst('NAAM, AMOUNT AUR TARIKH ZAROORI!','e');return;}
+  if(editEId){EX=EX.map(e=>e.id===editEId?{id:editEId,name,amount:parseFloat(amount),category,date,note}:e);tst('EXPENSE UPDATE! ✅');}
+  else{EX.unshift({id:Date.now(),name,amount:parseFloat(amount),category,date,note});EX.sort((a,b)=>b.date.localeCompare(a.date));tst('KHARCHA SAVE! 💸');}
+  svE();closeEm();rE();
+}
+function rE(){
+  const m=document.getElementById('exm').value,fl=EX.filter(e=>e.date.startsWith(m));
+  const earned=mE(m),totE=fl.reduce((a,e)=>a+(parseFloat(e.amount)||0),0),sav=earned-totE;
+  const cats={};fl.forEach(e=>{cats[e.category]=(cats[e.category]||0)+parseFloat(e.amount)});
+  document.getElementById('ec2').innerHTML=`
+    <div class="savc" style="background:${sav>=0?'var(--green-light)':'var(--red-light)'};border:1px solid ${sav>=0?'var(--green-border)':'var(--red-border)'};"><div style="position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;background:${sav>=0?'var(--green)':'var(--red)'}"></div>
+      <div style="font-size:11px;color:var(--text-secondary);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">SAVINGS</div>
+      <div style="font-size:28px;font-weight:700;color:${sav>=0?'var(--green)':'var(--red)'}">${f(Math.abs(sav))}</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;font-weight:500">${sav>=0?'✅ BACHA LIYA!':'⚠️ ZYADA KHARCHA!'}</div>
+      <div style="display:flex;gap:14px;margin-top:9px;justify-content:center">
+        <div><div style="font-size:10px;color:var(--text-secondary);font-weight:500">KAMAYI</div><div style="font-size:14px;font-weight:700;color:var(--green)">${f(earned)}</div></div>
+        <div><div style="font-size:10px;color:var(--text-secondary);font-weight:500">KHARCHA</div><div style="font-size:14px;font-weight:700;color:var(--red)">${f(totE)}</div></div>
+      </div></div>
+    ${Object.keys(cats).length?`<div class="ecg">${Object.entries(cats).map(([c,a])=>`<div class="ec"><div class="ecl">${c}</div><div class="ecv">${f(a)}</div></div>`).join('')}</div>`:''}
+    ${fl.length?fl.map(e=>`<div class="erc"><div><div class="ern">${e.name}</div><div class="erc2">${e.category} • ${fd2(e.date)}</div>${e.note?`<div style="font-size:9px;color:var(--text-secondary)">${e.note}</div>`:''}</div><div style="text-align:right"><div class="era">${f(e.amount)}</div><div style="display:flex;gap:3px;margin-top:3px"><button onclick="openEm(${e.id})" style="background:var(--primary-light);color:var(--primary);border:none;border-radius:6px;padding:3px 8px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer">✏️</button><button onclick="delExp(${e.id})" style="background:var(--red-light);color:var(--red);border:none;border-radius:6px;padding:3px 8px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer">🗑️</button></div></div></div>`).join(''):`<div class="empty"><div class="ei">💸</div>Is mahine koi kharcha nahi</div>`}`;
+}
+function rCmp(){
+  const m1=document.getElementById('cm1').value,m2=document.getElementById('cm2').value;if(!m1||!m2){document.getElementById('cmpc').innerHTML='';return;}
+  const[y1,mo1]=m1.split('-'),[y2,mo2]=m2.split('-');
+  const gs=m=>{const fl=R.filter(r=>r.date.startsWith(m));const s=fl.reduce((a,r)=>{const e=cE(r);a.t+=e.t;a.o+=e.o;a.oh+=parseFloat(r.otHours)||0;a.days+=r.dutyDone?1:0;return a},{t:0,o:0,oh:0,days:0});s.exp=mEx(m);s.sav=s.t-s.exp;return s};
+  const s1=gs(m1),s2=gs(m2),diff=s2.t-s1.t,dp=s1.t>0?Math.round((diff/s1.t)*100):0;
+  const rows=[{l:'KAMAYI',v1:s1.t,v2:s2.t},{l:'DUTY DAYS',v1:s1.days,v2:s2.days,raw:true},{l:'OT HOURS',v1:s1.oh,v2:s2.oh,raw:true,sf:'H'},{l:'KHARCHA',v1:s1.exp,v2:s2.exp},{l:'SAVINGS',v1:s1.sav,v2:s2.sav}];
+  document.getElementById('cmpc').innerHTML=`
+    <div class="cmpg"><div class="cmc" style="border-color:var(--primary-border)"><div class="cmm" style="color:var(--primary)">${MN[parseInt(mo1)-1]} ${y1}</div><div class="cma" style="color:var(--primary)">${f(s1.t)}</div><div class="cms">${s1.days} DIN • ${s1.oh}H OT</div></div><div class="cmc" style="border-color:var(--cyan-border)"><div class="cmm" style="color:var(--cyan)">${MN[parseInt(mo2)-1]} ${y2}</div><div class="cma" style="color:var(--cyan)">${f(s2.t)}</div><div class="cms">${s2.days} DIN • ${s2.oh}H OT</div></div></div>
+    ${rows.map(r=>{const mx=Math.max(r.v1,r.v2,1),w1=Math.round((r.v1/mx)*100),w2=Math.round((r.v2/mx)*100);const fv=v=>r.raw?(v+(r.sf||'')):f(v);return`<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text-secondary);font-weight:600;margin-bottom:4px;text-transform:uppercase">${r.l}</div><div class="cbrw"><div class="cbl" style="color:var(--primary)">${fv(r.v1)}</div><div class="cbbg"><div class="cbfl" style="width:${w1}%;background:var(--primary);opacity:.6;color:#fff"></div></div></div><div class="cbrw"><div class="cbl" style="color:var(--cyan)">${fv(r.v2)}</div><div class="cbbg"><div class="cbfl" style="width:${w2}%;background:var(--cyan);opacity:.6;color:#fff"></div></div></div></div>`}).join('')}
+    <div class="cmdf" style="border-color:${diff>=0?'var(--green-border)':'var(--red-border)'}"><div style="font-size:11px;color:var(--text-secondary);font-weight:500;margin-bottom:5px">IS MAHINE ${diff>=0?'ZYADA':'KAM'} KAMAYA</div><div style="font-size:22px;font-weight:700;color:${diff>=0?'var(--green)':'var(--red)'}">${diff>=0?'+':'-'}${f(Math.abs(diff))}</div><div style="font-size:11px;color:var(--text-secondary);margin-top:4px;font-weight:500">${Math.abs(dp)}% ${diff>=0?'ZYADA':'KAM'}</div></div>`;
+}
+function rS(){
+  const m=document.getElementById('sm3').value,[y,mo]=m.split('-');
+  const fl=R.filter(r=>r.date.startsWith(m)),c=document.getElementById('sc2');
+  if(!fl.length){c.innerHTML=`<div style="font-size:13px;font-weight:700;text-align:center;margin-bottom:10px;color:var(--text)">${MN[parseInt(mo)-1]} ${y}</div><div class="empty"><div class="ei">📭</div>Is mahine koi record nahi</div>`;return;}
+  const sum=fl.reduce((a,r)=>{const e=cE(r);a.d+=e.d;a.o+=e.o;a.t+=e.t;a.oh+=parseFloat(r.otHours)||0;a.dd+=r.dutyDone?1:0;a.ab+=r.dutyDone?0:1;return a},{d:0,o:0,t:0,oh:0,dd:0,ab:0});
+  const totE=mEx(m),sav=sum.t-totE,g=gl(),pct=Math.min(Math.round((sum.t/g)*100),100),rem=Math.max(g-sum.t,0);
+  const rc=pct>=100?'var(--green)':pct>=50?'var(--orange)':'var(--primary)';
+  const C=2*Math.PI*30,dash=C*(1-pct/100);
+  const l7=fl.slice(0,7).reverse(),mx=Math.max(...l7.map(r=>cE(r).t),1);
+  const dp2=sum.t>0?(sum.d/sum.t*100):0,op2=sum.t>0?(sum.o/sum.t*100):0;
+  c.innerHTML=`
+    <div style="font-size:14px;font-weight:700;text-align:center;margin-bottom:10px;color:var(--text)">${MN[parseInt(mo)-1]} ${y}</div>
+    <div class="sh"><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">TOTAL KAMAYI</div><div style="font-size:32px;font-weight:700;color:var(--green)">${f(sum.t)}</div><div style="font-size:11px;color:var(--text-secondary);margin-top:4px;font-weight:500">${sum.dd} DIN DUTY + ${sum.oh}H OT</div></div>
+    ${l7.length?`<div class="chc"><div class="cht">📈 RECENT KAMAYI</div><div class="cbars">${l7.map(r=>{const e=cE(r);const h=Math.max(Math.round((e.t/mx)*100),4);const d=new Date(r.date+'T00:00:00');return`<div class="cbw"><div class="cbb"><div class="cbf${parseFloat(r.otHours)>0?' ot':''}" style="height:${h}%"></div></div><div class="cbd">${DN[d.getDay()]}</div></div>`}).join('')}</div></div>`:''}
+    <div class="gsec"><div class="gsect">🎯 GOAL PROGRESS</div>
+      <div class="grw"><div class="gr"><svg width="76" height="76" viewBox="0 0 76 76"><circle cx="38" cy="38" r="30" fill="none" stroke="var(--border)" stroke-width="7"/><circle cx="38" cy="38" r="30" fill="none" stroke="${rc}" stroke-width="7" stroke-dasharray="${C}" stroke-dashoffset="${dash}" stroke-linecap="round" /></svg><div class="grt"><div class="grp" style="color:${rc}">${pct}%</div><div class="grl">DONE</div></div></div>
+      <div style="flex:1"><div class="gsr"><span class="gsl">💰 Kamaya</span><span class="gsv" style="color:var(--green)">${f(sum.t)}</span></div><div class="gsr"><span class="gsl">🎯 Goal</span><span class="gsv" style="color:var(--primary)">${f(g)}</span></div><div class="gsr" style="border:none"><span class="gsl">⏳ Baaki</span><span class="gsv" style="color:${rem>0?'var(--orange)':'var(--green)'}">${rem>0?f(rem):'DONE ✅'}</span></div></div></div>
+      <div class="msr">${[25,50,75,100].map(ms=>{const done=pct>=ms;return`<span class="ms" style="background:${done?'var(--primary-light)':'#F9FAFB'};border:1px solid ${done?'var(--primary-border)':'var(--border)'};color:${done?rc:'var(--text-secondary)'}">${done?'✅':'⬜'} ${ms}%</span>`}).join('')}</div>
+    </div>
+    <div class="sgrid">
+      <div class="sg" style="background:var(--primary-light);border:1px solid var(--primary-border)"><div class="sgl">🏢 DUTY</div><div class="sgv" style="color:var(--primary)">${f(sum.d)}</div><div class="sgs">${sum.dd} din</div></div>
+      <div class="sg" style="background:var(--orange-light);border:1px solid var(--orange-border)"><div class="sgl">⚡ OT</div><div class="sgv" style="color:var(--orange)">${f(sum.o)}</div><div class="sgs">${sum.oh}h OT</div></div>
+      <div class="sg" style="background:var(--red-light);border:1px solid var(--red-border)"><div class="sgl">💸 KHARCHA</div><div class="sgv" style="color:var(--red)">${f(totE)}</div><div class="sgs">is mahine</div></div>
+      <div class="sg" style="background:var(--green-light);border:1px solid var(--green-border)"><div class="sgl">💰 SAVINGS</div><div class="sgv" style="color:var(--green)">${f(Math.max(sav,0))}</div><div class="sgs">${sav>=0?'bacha!':'zyada kharcha'}</div></div>
+    </div>
+    ${sum.t>0?`<div class="bkb"><div style="font-size:11px;color:var(--text-secondary);font-weight:600;margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px">KAMAYI BREAKDOWN</div><div class="pbr">${dp2>0?`<div style="width:${dp2}%;background:var(--primary);border-radius:4px"></div>`:''}${op2>0?`<div style="width:${op2}%;background:var(--orange);border-radius:4px"></div>`:''}</div><div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--text-secondary);font-weight:500"><span>🏢 DUTY ${Math.round(dp2)}%</span><span>⚡ OT ${Math.round(op2)}%</span></div></div>`:''}`;
+}
+const openDrw=()=>{document.getElementById('drw').classList.add('open');document.getElementById('dov').classList.add('show')};
+const closeDrw=()=>{document.getElementById('drw').classList.remove('open');document.getElementById('dov').classList.remove('show')};
+const PL={add:'ADD ENTRY',history:'HISTORY',weekly:'WEEKLY VIEW',summary:'SUMMARY',expense:'KHARCHA',calendar:'CALENDAR',compare:'COMPARE'};
+const BNC={history:'a1',weekly:'a2',summary:'a3',expense:'a4'};
+function gp(p){
+  ['add','history','weekly','summary','expense','calendar','compare'].forEach(t=>{
+    const pgId='p'+(t==='add'?'a':t==='history'?'h':t==='weekly'?'wkly':t==='summary'?'s':t==='expense'?'e':t==='calendar'?'cal':'cmp');
+    const pg=document.getElementById(pgId);
+    if(pg)pg.style.display=t===p?'block':'none';
+    const di=document.getElementById('di_'+t);if(di)di.classList.toggle('act',t===p);
+    const bn=document.getElementById('bn_'+t);if(bn){bn.className='bn';if(BNC[t]&&t===p)bn.classList.add(BNC[t]);}
+  });
+  document.getElementById('hp').textContent=PL[p]||p.toUpperCase();
+  if(p==='history')rH();if(p==='summary')rS();if(p==='calendar')rCal();if(p==='expense')rE();if(p==='compare')rCmp();if(p==='weekly')rWk();
+  const fab=document.getElementById('fab');
+  if(fab){
+    if(p==='add'){fab.style.background='var(--primary)';fab.querySelector('.fab-icon').textContent='⚡';fab.querySelector('.fab-label').textContent='ADD';}
+    else{fab.style.background='var(--primary)';fab.querySelector('.fab-icon').textContent='⚡';fab.querySelector('.fab-label').textContent='ADD';}
+  }
+  closeDrw();
+}
+function openSt(){
+  document.getElementById('s_s').value=ST.monthlyFixedSalary||'';document.getElementById('s_d').value=ST.workingDaysInMonth||'';document.getElementById('s_h').value=ST.dutyHoursPerDay||'';document.getElementById('s_o').value=ST.otRatePerHour||'';document.getElementById('s_g').value=ST.monthlyGoal||'';
+  ucp();document.getElementById('sm').classList.add('show');
+  ['s_s','s_d'].forEach(id=>document.getElementById(id).addEventListener('input',ucp));
+}
+function ucp(){const s=parseFloat(document.getElementById('s_s').value)||0,d=parseFloat(document.getElementById('s_d').value)||26;if(s&&d)document.getElementById('cp2').textContent=`DAILY WAGE = ${f(s/d)} PER DIN`;}
+const closeSt=()=>document.getElementById('sm').classList.remove('show');
+function saveSt(){
+  ST.monthlyFixedSalary=parseFloat(document.getElementById('s_s').value)||14000;ST.workingDaysInMonth=parseFloat(document.getElementById('s_d').value)||26;ST.dutyHoursPerDay=parseFloat(document.getElementById('s_h').value)||9;ST.otRatePerHour=document.getElementById('s_o').value;ST.monthlyGoal=document.getElementById('s_g').value;
+  try{localStorage.setItem(STK,JSON.stringify(ST))}catch{}closeSt();ua();tst('SETTINGS SAVE HO GAYI! ⚙️');
+}
+function showCel(earned,ml){document.getElementById('camt').textContent=f(earned)+' KAMAYE!';document.getElementById('cmo').textContent=ml+' — GOAL COMPLETE! 🎯';spawnConf();document.getElementById('cov').classList.add('show');}
+const closeCel=()=>{document.getElementById('cov').classList.remove('show');document.getElementById('cfc').innerHTML=''};
+function spawnConf(){const cls=['#fee440','#f15bb5','#00f5d4','#9b5de5','#ff6b35','#00bbf9'];const con=document.getElementById('cfc');con.innerHTML='';for(let i=0;i<48;i++){const p=document.createElement('div');p.className='cp';p.style.cssText=`left:${Math.random()*100}%;background:${cls[i%cls.length]};animation-duration:${1.5+Math.random()*2.5}s;animation-delay:${Math.random()*2}s;width:${5+Math.random()*7}px;height:${5+Math.random()*7}px;border-radius:${Math.random()>.5?'50%':'2px'}`;con.appendChild(p);}}
+function tst(msg,type='s'){const t=document.getElementById('tst');t.textContent=msg;t.style.background=type==='e'?'var(--red)':'var(--green)';t.style.color='#fff';t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
+// Weekly View
+let wkOffset=0;
+function getWkStart(offset){
+  const now=new Date();const day=now.getDay();
+  const mon=new Date(now);mon.setDate(now.getDate()-day+1+(offset*7));mon.setHours(0,0,0,0);return mon;
+}
+function rWk(){
+  const tod=new Date().toISOString().split('T')[0];
+  const start=getWkStart(wkOffset);
+  const days=[];for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);days.push(d);}
+  const startStr=days[0].toLocaleDateString('hi-IN',{day:'numeric',month:'short'});
+  const endStr=days[6].toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'});
+  document.getElementById('wk-title').textContent=wkOffset===0?'THIS WEEK':`${startStr} — ${endStr}`;
+  document.getElementById('wk-heads').innerHTML=['M','T','W','T','F','S','S'].map(d=>`<div class="wk-head">${d}</div>`).join('');
+  const todayStr=new Date().toISOString().split('T')[0];
+  let totalEarn=0,dutyDays=0,totalOT=0;
+  document.getElementById('wk-cells').innerHTML=days.map(d=>{
+    const ds=d.toISOString().split('T')[0];
+    const r=R.find(x=>x.date===ds);
+    const isFuture=ds>todayStr;
+    let cls='wk-cell',amt='';
+    if(isFuture)cls+=' wfu';
+    else if(r){cls+=r.dutyDone?' wdy':' wab';const e=cE(r);if(e.t>0){amt=`<div class="wk-amt">₹${Math.round(e.t/1000*10)/10}k</div>`;totalEarn+=e.t;if(r.dutyDone)dutyDays++;totalOT+=parseFloat(r.otHours)||0;}}
+    else cls+=' wnr';
+    if(ds===todayStr)cls+=' wto';
+    return`<div class="${cls}" onclick="${isFuture?'':r?`editR(${r.id})`:`prefillDate('${ds}')`}">${d.getDate()}${amt}</div>`;
+  }).join('');
+  document.getElementById('wk-sum').innerHTML=`
+    <div class="wk-s" style="background:var(--primary-light);border:1px solid var(--primary-border)"><div class="wk-sl">DUTY DAYS</div><div class="wk-sv" style="color:var(--primary)">${dutyDays}</div></div>
+    <div class="wk-s" style="background:var(--orange-light);border:1px solid var(--orange-border)"><div class="wk-sl">OT HOURS</div><div class="wk-sv" style="color:var(--orange)">${totalOT}H</div></div>
+    <div class="wk-s" style="background:var(--green-light);border:1px solid var(--green-border)"><div class="wk-sl">KAMAYI</div><div class="wk-sv" style="color:var(--green)">${totalEarn>=1000?'₹'+(totalEarn/1000).toFixed(1)+'K':f(totalEarn)}</div></div>`;
+  const wRecs=R.filter(r=>days.some(d=>d.toISOString().split('T')[0]===r.date));
+  document.getElementById('wk-recs').innerHTML=wRecs.length?wRecs.map(r=>{const e=cE(r);const dc=r.dutyDone?`<span class="chip cd">🏢 ${f(e.d)}</span>`:`<span class="chip ca">❌ ABSENT</span>`;const oc=parseFloat(r.otHours)>0?`<span class="chip co">⚡ ${r.otHours}H=${f(e.o)}</span>`:'';return`<div class="rec ${r.dutyDone?'p':'a'}"><div class="rc-t"><div><div class="rd">${fd2(r.date)}</div>${r.note?`<div class="rn">${r.note}</div>`:''}</div><div class="ra">${f(e.t)}</div></div><div class="chips">${dc}${oc}</div><div class="ar"><button class="ab" onclick="editR(${r.id})" style="background:var(--primary-light);color:var(--primary)">✏️ EDIT</button><button class="ab" onclick="confirmDelR(${r.id})" style="background:var(--red-light);color:var(--red)">🗑️ DEL</button></div></div>`;}).join(''):'<div class="empty"><div class="ei">📭</div>Is hafte koi record nahi</div>';
+}
+function wkPrev(){wkOffset--;rWk();}
+function wkNext(){if(wkOffset<0){wkOffset++;rWk();}}
+function prefillDate(ds){document.getElementById('fd').value=ds;gp('add');}
+
+// Export
+function openExp(){document.getElementById('ecov').classList.add('show');}
+function closeExp(){document.getElementById('ecov').classList.remove('show');}
+function expCSV(){
+  const rows=[['Date','Day','Duty Done','OT Hours','Duty Earnings','OT Earnings','Total','Note']];
+  R.forEach(r=>{const e=cE(r);const d=new Date(r.date+'T00:00:00');rows.push([r.date,DN[d.getDay()],r.dutyDone?'Yes':'No',r.otHours||0,Math.round(e.d),Math.round(e.o),Math.round(e.t),r.note||'']);});
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  dlFile('duty-tracker-records.csv','text/csv',csv);tst('CSV DOWNLOAD! 📊');closeExp();
+}
+function expJSON(){
+  const data={records:R,expenses:EX,settings:ST,exported:new Date().toISOString()};
+  dlFile('duty-tracker-backup.json','application/json',JSON.stringify(data,null,2));tst('BACKUP DOWNLOAD! 💾');closeExp();
+}
+function expPrint(){
+  closeExp();
+  const m=nm(),[y,mo]=m.split('-');
+  const fl=R.filter(r=>r.date.startsWith(m));
+  const sum=fl.reduce((a,r)=>{const e=cE(r);a.t+=e.t;a.d+=e.d;a.o+=e.o;a.dd+=r.dutyDone?1:0;a.oh+=parseFloat(r.otHours)||0;return a},{t:0,d:0,o:0,dd:0,oh:0});
+  const rows=fl.map(r=>{const e=cE(r);return`<tr><td>${fd2(r.date)}</td><td>${r.dutyDone?'✅ Duty':'❌ Absent'}</td><td>${r.otHours||0}H</td><td>₹${Math.round(e.d).toLocaleString('en-IN')}</td><td>₹${Math.round(e.o).toLocaleString('en-IN')}</td><td><b>₹${Math.round(e.t).toLocaleString('en-IN')}</b></td></tr>`}).join('');
+  const html=`<html><head><title>Duty Tracker — ${MN[parseInt(mo)-1]} ${y}</title><style>body{font-family:Arial,sans-serif;padding:20px;color:#111}h1{color:#6366F1}table{width:100%;border-collapse:collapse;margin-top:16px}th,td{border:1px solid #ddd;padding:8px 10px;font-size:13px}th{background:#EEF2FF;color:#6366F1}tr:nth-child(even){background:#fafafa}.summary{display:flex;gap:14px;margin:14px 0;flex-wrap:wrap}.s-box{background:#EEF2FF;border:1px solid #C7D2FE;border-radius:8px;padding:10px 16px;min-width:120px}.s-box b{display:block;font-size:18px;color:#6366F1}</style></head><body><h1>⚔️ DUTY TRACKER — ${MN[parseInt(mo)-1]} ${y}</h1><div class="summary"><div class="s-box"><small>DUTY DAYS</small><b>${sum.dd}</b></div><div class="s-box"><small>OT HOURS</small><b>${sum.oh}H</b></div><div class="s-box"><small>TOTAL KAMAYI</small><b>₹${Math.round(sum.t).toLocaleString('en-IN')}</b></div></div><table><thead><tr><th>Date</th><th>Status</th><th>OT</th><th>Duty ₹</th><th>OT ₹</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();w.print();
+}
+function triggerImport(){document.getElementById('imp-file').click();}
+function importJSON(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      let msg='';
+      if(data.records&&Array.isArray(data.records)){R=data.records;svR();msg+='Records restore ho gaye! ';}
+      if(data.expenses&&Array.isArray(data.expenses)){EX=data.expenses;svE();msg+='Kharcha restore! ';}
+      if(data.settings&&typeof data.settings==='object'){ST={...ST,...data.settings};try{localStorage.setItem(STK,JSON.stringify(ST))}catch{}msg+='Settings restore!';}
+      ua();closeExp();tst('✅ BACKUP RESTORE HO GAYA!');
+      setTimeout(()=>rH(),300);
+    }catch(err){tst('❌ INVALID FILE — JSON chahiye!','e');}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+function dlFile(name,type,content){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();URL.revokeObjectURL(a.href);
+}
+
+function toggleTheme(){
+  const isDark=document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent=isDark?'☀️':'🌙';
+  try{localStorage.setItem('dtr-theme',isDark?'dark':'light')}catch{}
+}
+function loadTheme(){
+  try{const t=localStorage.getItem('dtr-theme');if(t==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='☀️';}}catch{}
+}
+
+// ===== PIN SYSTEM =====
+const PIN_KEY='dtr-pin';
+let pinBuffer='',pinMode='login',pinStep=1,pinTemp='';
+function pinGetSaved(){try{return localStorage.getItem(PIN_KEY)||''}catch{return''}}
+function pinSave(p){try{localStorage.setItem(PIN_KEY,p)}catch{}}
+function pinRemoveSaved(){try{localStorage.removeItem(PIN_KEY)}catch{}}
+
+function pinInit(){
+  const saved=pinGetSaved();
+  if(!saved){
+    pinMode='setup';pinStep=1;pinBuffer='';pinTemp='';
+    document.getElementById('pinTitle').textContent='🔐 NAYA PIN BANAO';
+    document.getElementById('pinForgot').style.display='none';
+    document.getElementById('pinScreen').classList.remove('hidden');
+  } else {
+    pinMode='login';pinBuffer='';
+    document.getElementById('pinTitle').textContent='🔐 PIN DAALO';
+    document.getElementById('pinForgot').style.display='block';
+    document.getElementById('pinScreen').classList.remove('hidden');
+  }
+}
+
+function pinPress(d){
+  if(pinBuffer.length>=4)return;
+  pinBuffer+=d;
+  pinUpdateDots();
+  if(pinBuffer.length===4){
+    setTimeout(()=>pinSubmit(),120);
+  }
+}
+
+function pinDel(){
+  if(!pinBuffer.length)return;
+  pinBuffer=pinBuffer.slice(0,-1);
+  pinUpdateDots();
+  document.getElementById('pinErr').textContent='';
+}
+
+function pinUpdateDots(state=''){
+  for(let i=0;i<4;i++){
+    const dot=document.getElementById('pd'+i);
+    dot.className='pin-dot'+(i<pinBuffer.length?' filled':'')+(state?' '+state:'');
+  }
+}
+
+function pinSubmit(){
+  if(pinMode==='login'){
+    const saved=pinGetSaved();
+    if(pinBuffer===saved){
+      pinUpdateDots('success');
+      setTimeout(()=>{
+        document.getElementById('pinScreen').classList.add('hidden');
+        document.getElementById('mainApp').style.visibility='visible';document.getElementById('mainApp').style.pointerEvents='';
+        loadTheme();load();
+      },300);
+    } else {
+      pinUpdateDots('error');
+      document.getElementById('pinErr').textContent='GALAT PIN! DOBARA TRY KARO';
+      setTimeout(()=>{pinBuffer='';pinUpdateDots();},600);
+    }
+  } else if(pinMode==='setup'){
+    if(pinStep===1){
+      pinTemp=pinBuffer;pinBuffer='';
+      document.getElementById('pinTitle').textContent='🔁 DOBARA DAALO (CONFIRM)';
+      document.getElementById('pinErr').textContent='';
+      pinUpdateDots();
+      pinStep=2;
+    } else {
+      if(pinBuffer===pinTemp){
+        pinSave(pinBuffer);
+        pinUpdateDots('success');
+        document.getElementById('pinErr').textContent='';
+        setTimeout(()=>{
+          document.getElementById('pinScreen').classList.add('hidden');
+          document.getElementById('mainApp').style.visibility='visible';document.getElementById('mainApp').style.pointerEvents='';
+          if(pinMode==='setup'&&pinStep===2&&document.getElementById('pinChangeScreen'))
+            document.getElementById('pinChangeScreen').classList.add('hidden');
+          loadTheme();load();
+          tst('🔐 PIN SET HO GAYA!');
+        },300);
+      } else {
+        pinUpdateDots('error');
+        document.getElementById('pinErr').textContent='PIN MATCH NAHI KIYA! PHIR SE SHURU KARO';
+        setTimeout(()=>{pinBuffer='';pinTemp='';pinStep=1;document.getElementById('pinTitle').textContent='🔐 NAYA PIN BANAO';pinUpdateDots();},800);
+      }
+    }
+  } else if(pinMode==='change'){
+    const saved=pinGetSaved();
+    if(pinStep===1){
+      if(pinBuffer===saved){
+        pinTemp='';pinBuffer='';pinStep=2;
+        document.getElementById('pinTitle').textContent='🔐 NAYA PIN DAALO';
+        document.getElementById('pinErr').textContent='';
+        pinUpdateDots();
+      } else {
+        pinUpdateDots('error');
+        document.getElementById('pinErr').textContent='PURANA PIN GALAT HAI!';
+        setTimeout(()=>{pinBuffer='';pinUpdateDots();},600);
+      }
+    } else if(pinStep===2){
+      pinTemp=pinBuffer;pinBuffer='';pinStep=3;
+      document.getElementById('pinTitle').textContent='🔁 NAYA PIN CONFIRM KARO';
+      pinUpdateDots();
+    } else {
+      if(pinBuffer===pinTemp){
+        pinSave(pinBuffer);
+        pinUpdateDots('success');
+        setTimeout(()=>{
+          document.getElementById('pinScreen').classList.add('hidden');
+          document.getElementById('mainApp').style.visibility='visible';document.getElementById('mainApp').style.pointerEvents='';
+          tst('🔐 PIN CHANGE HO GAYA!');
+        },300);
+      } else {
+        pinUpdateDots('error');
+        document.getElementById('pinErr').textContent='PIN MATCH NAHI! PHIR KARO';
+        setTimeout(()=>{pinBuffer='';pinTemp='';pinStep=2;document.getElementById('pinTitle').textContent='🔐 NAYA PIN DAALO';pinUpdateDots();},800);
+      }
+    }
+  }
+}
+
+function openPinChange(){
+  const saved=pinGetSaved();
+  pinMode='change';pinStep=saved?1:2;pinBuffer='';pinTemp='';
+  document.getElementById('pinTitle').textContent=saved?'🔑 PURANA PIN DAALO':'🔐 NAYA PIN BANAO';
+  document.getElementById('pinErr').textContent='';
+  document.getElementById('pinForgot').style.display='none';
+  pinUpdateDots();
+  document.getElementById('pinScreen').classList.remove('hidden');
+}
+
+function pinRemove(){
+  const saved=pinGetSaved();
+  if(!saved){tst('PIN SET NAHI HAI','e');return;}
+  if(confirm('PIN hata dein? App unlock rahegi.')){
+    pinRemoveSaved();
+    tst('🔓 PIN HAT GAYA!');
+  }
+}
+
+function pinReset(){
+  if(confirm('PIN reset kar dein? Iska matlab app ka data delete NAHI hoga, sirf PIN hatega.')){
+    pinRemoveSaved();
+    pinMode='setup';pinStep=1;pinBuffer='';pinTemp='';
+    document.getElementById('pinTitle').textContent='🔐 NAYA PIN BANAO';
+    document.getElementById('pinErr').textContent='';
+    document.getElementById('pinForgot').style.display='none';
+    pinUpdateDots();
+    tst('PIN RESET — NAYA PIN BANAO');
+  }
+}
+// ===== END PIN SYSTEM =====
+
+loadTheme();pinInit();
+</script>
+</body>
+</html>
